@@ -1,5 +1,5 @@
 from kivymd.uix.screen import MDScreen
 
 
-class Game(MDScreen):
+class GameScreen(MDScreen):
     pass

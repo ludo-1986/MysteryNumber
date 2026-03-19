@@ -1,0 +1,29 @@
+#:import utils kivy.utils
+#:set blue_dark "#080C56"
+
+<StartScreen>:
+    md_bg_color: self.theme_cls.primaryColor
+
+    MDTopAppBar:
+        type: "small"
+        pos_hint: {'right': 1.0,'top': 1.0}
+        theme_elevation_level: "Custom"
+        elevation_level: 5
+        theme_shadow_color: "Custom"
+        shadow_color: utils.get_color_from_hex(blue_dark)
+
+        MDTopAppBarTitle:
+            text: "Le nombre mystère"
+            halign: "center"
+            role: "large"
+            
+    # Utilisons un FloatLayout direct pour tout l'écran, c'est plus simple pour centrer
+    MDFloatLayout:
+
+        ClickableImage:
+            # VERIFIE BIEN LE NOM : mystery_number_start_256.png ou mystery_number_512.png ?
+            source: "assets/icons/mystery_number_start_256.png"
+            size_hint: None, None
+            size: dp(200), dp(200) 
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            on_release: root.manager.current = "game_page"
