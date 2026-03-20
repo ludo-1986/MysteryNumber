@@ -1,0 +1,74 @@
+#:import utils kivy.utils
+#:set blue_dark "#080C56"
+
+<GameScreen>:
+    md_bg_color: self.theme_cls.primaryColor
+
+    MDTopAppBar:
+        type: "small"
+        pos_hint: {'right': 1.0,'top': 1.0}
+        theme_elevation_level: "Custom"
+        elevation_level: 5
+        theme_shadow_color: "Custom"
+        shadow_color: utils.get_color_from_hex(blue_dark)
+
+        MDTopAppBarLeadingButtonContainer:
+
+            MDActionTopAppBarButton:
+                icon: "home-circle"
+                on_release: root.manager.current = "home_page"
+
+        MDTopAppBarTitle:
+            text: root.text_app_bar
+            halign: "center"
+
+        MDTopAppBarTrailingButtonContainer:
+
+            MDActionTopAppBarButton:
+                icon: "close-circle"
+                on_release: root.stopped_game()
+
+    MDBoxLayout:
+        orientation: "vertical"
+        pos_hint: {'right': 1.0,'top': 1.0}
+        spacing: dp(20)
+        padding: dp(30)
+
+        MDLabel:
+            text: f"Tour : {root.score}"
+            font_style: "Display"
+            role: "medium"
+            halign: "center"
+            pos_hint: {'center_x': 0.75}
+            theme_text_color: "Custom"
+            text_color: self.theme_cls.onPrimaryColor
+
+        MDLabel:
+            text: root.smaller_larger
+            font_style: "Display"
+            role: "medium"
+            halign: "center"
+            pos_hint: {'center_x': 0.5, "center_y": 0.8}
+            theme_text_color: "Custom"
+            text_color: self.theme_cls.onPrimaryColor
+            
+        MDTextField:
+            id: field_user_number
+            mode: "filled"
+            size_hint_x: 0.75
+            pos_hint: {'center_x': 0.5}
+            input_filter: "int"
+            on_text_validate: root.game()
+
+            MDTextFieldHintText:
+                text: "Entrez un nombre"
+
+        MDFabButton:
+            icon: "send"
+            style: "standard"
+            pos_hint: {'center_x': 0.5}
+            theme_elevation_level: "Custom"
+            elevation_level: 5
+            theme_shadow_color: "Custom"
+            shadow_color: utils.get_color_from_hex(blue_dark)
+            on_release: root.game()
