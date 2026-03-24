@@ -25,24 +25,23 @@ class GameScreen(MDScreen):
     dialog_stop = None
     start_text_app_bar = "Entrez un nombre entre"
     
-    max_number = NumericProperty(100)
-    min_number = NumericProperty(1)
-    mystery_number = NumericProperty(0)
+    max_number = 100
+    min_number = 1
+    mystery_number = 0
     score = NumericProperty(1)
-    user_number = NumericProperty(0)
+    user_number = 0
     
     smaller_larger = StringProperty("!!! Bonne chance !!!")
     text_app_bar = StringProperty("Entrez un nombre entre")
+    end_text = StringProperty("")
     
     # Les fonctions de départ et d'arrêt
-    def on_pre_enter(self, *args):
+    def on_pre_enter(self):
         
         if self.text_app_bar == self.start_text_app_bar:
             self.text_app_bar += f" {self.min_number} et {self.max_number}"
         
         self.mystery_number = random.randint(self.min_number, self.max_number)
-        self.score = 1
-        self.user_number = 0
         
     def stop_restart(self, dialog, page="", *args): # Ajoute *args car MDButton envoie l'instance du bouton
     
@@ -50,7 +49,7 @@ class GameScreen(MDScreen):
             "stop": self.dialog_stop,
             "final": self.dialog_final,
             "error": self.dialog_error,
-            "alert": self.dialog_alert
+            "alert": self.dialog_alert,
         }
         
         pages = {
@@ -60,18 +59,22 @@ class GameScreen(MDScreen):
         
         # 1. On ferme le dialogue d'abord pour libérer l'interface
         if stop_dialog.get(dialog):
+            print("je ferme le DIALOG")
             stop_dialog[dialog].dismiss()
             stop_dialog[dialog] = None
+            print(f"le DIALOG {dialog} est {stop_dialog.get(dialog)}")
         
             # 2. On change d'écran après une micro-seconde (optionnel mais plus sûr)
             if page:
                 if dialog == "final" and page == "game":
                     self.alert_restart()
+                print("Je réinitialise les variables")
                 self.mystery_number = random.randint(self.min_number, self.max_number)
                 self.score = 1
                 self.user_number = 0
                 self.smaller_larger = "!!! Bonne chance !!!"
                 self.manager.current = pages[page]
+                print(f"voici le résultat : {self.mystery_number} -- {self.score} -- {self.user_number} --")
                 
     
     # Les fonctions d'alerte
@@ -95,35 +98,34 @@ class GameScreen(MDScreen):
             
     def end_game(self):
         
-        if not self.dialog_final:
-            self.dialog_final = MDDialog(
-                MDDialogIcon(icon="party-popper"),
-                MDDialogHeadlineText(text=f"!!! BRAVO !!!, vous avez trouvé {self.mystery_number}"),
-                MDDialogContentContainer(
-                    MDLabel(
-                        text="Voulez vous rejouer ?",
-                        font_style="Display",
-                        role="medium",
-                        halign="center"
-                    )
+        self.dialog_final = MDDialog(
+            MDDialogIcon(icon="party-popper"),
+            MDDialogHeadlineText(text=f"!!! BRAVO !!!, vous avez trouvé {self.mystery_number}"),
+            MDDialogContentContainer(
+                MDLabel(
+                    text="Voulez vous rejouer ?",
+                    font_style="Display",
+                    role="medium",
+                    halign="center"
+                )
+            ),
+            MDDialogButtonContainer(
+                MDButton(
+                    MDButtonIcon(icon="restart"),
+                    MDButtonText(text="OUI"),
+                    style="text",
+                    on_release=lambda x: self.stop_restart(dialog="final", page="game")
                 ),
-                MDDialogButtonContainer(
-                    MDButton(
-                        MDButtonIcon(icon="restart"),
-                        MDButtonText(text="OUI"),
-                        style="text",
-                        on_release=lambda x: self.stop_restart(dialog="final", page="game")
-                    ),
-                    MDButton(
-                        MDButtonIcon(icon="location-exit"),
-                        MDButtonText(text="NON"),
-                        style="text",
-                        on_release=lambda x: self.stop_restart(dialog="final", page="home")
-                    ),
-                    spacing=dp(10)
+                MDButton(
+                    MDButtonIcon(icon="location-exit"),
+                    MDButtonText(text="NON"),
+                    style="text",
+                    on_release=lambda x: self.stop_restart(dialog="final", page="home")
                 ),
-            )
-        
+                spacing=dp(10)
+            ),
+        )
+            
         self.dialog_final.open()
     
     def stopped_game(self):
